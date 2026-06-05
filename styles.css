@@ -1,0 +1,339 @@
+/* --- Base Reset & Color Variables --- */
+:root {
+    --bg-color: #F9F7F3;
+    --text-main: #3E4E36;
+    --text-muted: #7A8B70;
+    --accent-green: #5C7153;
+    --accent-green-hover: #4A5B43;
+    --border-light: #E5E2DB;
+    --bed-empty-bg: #F3EFEA;
+    --bed-empty-border: #D1CBC1;
+    --bed-planted-bg: #E5F0E5;
+    --bed-planted-border: #8BA888;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+}
+
+/* --- Typography & Helpers --- */
+.hidden {
+    display: none !important;
+}
+
+/* --- Main Layout --- */
+.app-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Header --- */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.header-titles h1 {
+    font-size: 1.75rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+}
+
+.header-titles p {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin-top: 4px;
+}
+
+/* --- Mode Toggle Switch --- */
+.mode-toggle {
+    display: flex;
+    gap: 4px;
+    background-color: white;
+    padding: 4px;
+    border-radius: 999px;
+    border: 1px solid var(--border-light);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.mode-toggle button {
+    background: transparent;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.mode-toggle button:hover {
+    background-color: #f3f4f6;
+}
+
+.mode-toggle button.active {
+    background-color: var(--accent-green);
+    color: white;
+}
+
+/* --- Garden Canvas --- */
+.garden-canvas {
+    position: relative;
+    width: 100%;
+    height: 60vh;
+    min-height: 400px;
+    background-color: white;
+    border-radius: 16px;
+    border: 1px solid var(--border-light);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    overflow: hidden;
+    
+    /* Creates the dotted grid pattern */
+    background-image: radial-gradient(var(--border-light) 2px, transparent 2px);
+    background-size: 40px 40px;
+    
+    /* Prevents pull-to-refresh on mobile when drawing */
+    touch-action: none; 
+}
+
+.garden-canvas.draw-mode {
+    cursor: crosshair;
+}
+
+.garden-canvas.inspect-mode {
+    cursor: default;
+}
+
+/* --- Garden Beds --- */
+.bed {
+    position: absolute;
+    border-radius: 8px;
+    border: 2px solid var(--bed-empty-border);
+    background-color: var(--bed-empty-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    user-select: none;
+}
+
+.bed i {
+    font-size: 24px;
+    color: var(--bed-empty-border);
+}
+
+.bed.planted {
+    background-color: var(--bed-planted-bg);
+    border-color: var(--bed-planted-border);
+}
+
+.bed.planted span {
+    color: var(--accent-green);
+    font-weight: 500;
+    font-size: 0.875rem;
+    padding: 0 4px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.garden-canvas.inspect-mode .bed {
+    cursor: pointer;
+}
+
+.garden-canvas.inspect-mode .bed:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 10;
+}
+
+/* --- Modal --- */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(62, 78, 54, 0.2);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    
+    /* Handled by JS classes (.hidden or .flex) */
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.modal.flex {
+    display: flex;
+}
+
+.modal-content {
+    background-color: white;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    position: relative;
+    animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: #9ca3af;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: var(--text-main);
+}
+
+.modal-content h2 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: 24px;
+}
+
+/* --- Form Styles --- */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+input[type="text"],
+input[type="date"] {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid var(--border-light);
+    background: transparent;
+    padding: 8px 0;
+    font-size: 1rem;
+    color: var(--text-main);
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus {
+    outline: none;
+    border-bottom-color: var(--accent-green);
+}
+
+input::placeholder {
+    color: #9ca3af;
+    font-weight: 300;
+}
+
+/* --- Photo Upload & Gallery --- */
+.photo-upload-btn {
+    width: 100%;
+    border: 2px dashed var(--border-light);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+    font-family: inherit;
+}
+
+.photo-upload-btn i {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.photo-upload-btn span {
+    font-size: 0.875rem;
+}
+
+.photo-upload-btn:hover {
+    background-color: var(--bg-color);
+    border-color: #D1CBC1;
+}
+
+.photo-gallery {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.gallery-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid var(--border-light);
+}
+
+/* --- Buttons --- */
+.save-btn {
+    width: 100%;
+    background-color: var(--accent-green);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 8px;
+    font-family: inherit;
+}
+
+.save-btn:hover {
+    background-color: var(--accent-green-hover);
+}
